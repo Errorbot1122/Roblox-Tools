@@ -1,0 +1,12 @@
+@keyframes RobloxColors {
+  0%   {color: rgb(228, 36, 27);}
+  25%  {color: rgb(134, 140, 140);}
+  50%  {color: rgb(206, 211, 220);}
+  75%  {color: rgb(4, 164, 252);}
+  100% {color: rgb(228, 36, 27);}
+}
+
+#404 {
+  animation-name: example;
+  animation-duration: 4s; 
+}
