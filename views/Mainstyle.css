@@ -1,0 +1,29 @@
+/* Other Stuff */
+
+  /* Anamtion */
+@keyframes RobloxColors {
+  0%   {color: rgb(228, 36, 27);}
+  25%  {color: rgb(134, 140, 140);}
+  50%  {color: rgb(206, 211, 220);}
+  75%  {color: rgb(4, 164, 252);}
+  100% {color: rgb(228, 36, 27);}
+}
+
+/* Main Css */
+.Error {
+  animation-name: RobloxColors;
+  animation-duration: 10s;
+  animation-iteration-count: infinite;
+  font-size: 20vw;
+  margin: 0;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  -ms-transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%);
+}
+
+.Code {
+  background-color: lightsteelblue
+  
+}
