@@ -6,8 +6,8 @@ const cloudinary = require("cloudinary").v2;
 cloudinary.config({
   cloud_name: "eb1122-2",
   api_key: "794149432517886",
-  api_secret:	"rp0yJRWlnfOatmdJ1_GGQ_dzzr0"
-})
+  api_secret:	process.env.CLOUDINARY_SECRET
+})/
 
 app.use(express.static(__dirname + '/views'));
 
