@@ -24,6 +24,22 @@
 }
 
 .Code {
-  background-color: lightsteelblue
-  
+  background-color: lightgrey;
+  border-radius: 5px;
+  border-color: gray;
+  border-style: solid;
+  border-width: 1.5px;
+  text-align: left;
+  font-size: 0.85em;
+  font-family: OCR A Std, monospace;
+}
+
+.BackgroundImg {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  -ms-transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%);
+  width: 70vw;
+
 }

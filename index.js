@@ -1,7 +1,13 @@
 const express = require("express");
-const fetch = require("node-fetch")
+const fetch = require("node-fetch");
 const app = express();
+const cloudinary = require("cloudinary").v2;
 
+cloudinary.config({
+  cloud_name: "eb1122-2",
+  api_key: "794149432517886",
+  api_secret:	"rp0yJRWlnfOatmdJ1_GGQ_dzzr0"
+})
 
 app.use(express.static(__dirname + '/views'));
 
@@ -9,9 +15,15 @@ app.set('view engine', 'ejs');
 
 
 function HandleError(req, res, errorcode) {
+  console.log(errorcode)
   // respond with html page
   if (req.accepts('html') == "html") {
-    res.render('Error', {url: req.url, ErrorCode: errorcode});
+    console.log(errorcode, errorcode == 418)
+    if (errorcode == 418) {
+      res.render('Error', {url: req.url, ErrorCode: errorcode, GifAlt: "I AM A TEAPOT",GifLink: "https://media0.giphy.com/media/XJtpTFGatDgDTJhLtr/giphy.gif"});
+      return;
+    }
+    res.render('Error', {url: req.url, ErrorCode: errorcode, GifAlt: "random pic", GifLink: "https://www.ikea.cn/cn/en/images/products/oumbaerlig-pot-with-lid__0710343_PE727464_S5.JPG"});
     return;
   }
 
@@ -26,6 +38,8 @@ function HandleError(req, res, errorcode) {
 }
 
 
+cloudinary.image("l.gif", {width: 250, flags: "animated", fetch_format: "auto", crop: "scale", resource_type: "video"})
+
 app.get('/api', (req, res, next) => {
 
 });
@@ -38,7 +52,7 @@ app.get('/api/roblox/Url/', async (req, res, next) => {
   urlPath = req.query.url
 
   if (urlPath == null) {
-    res.redirect(/Error/404)
+    res.redirect(Error/404)
   }
 
   const UrlSplit = urlPath.toLowerCase().trim().split(/:?\/+/g);
@@ -47,8 +61,8 @@ app.get('/api/roblox/Url/', async (req, res, next) => {
   if (/(http)s?/.test(UrlBeging[0]) == true && /(roblox.com)/.test(UrlBeging[1])) {
     try {
 
-    } catch () {
-      res.redirect(/Error/500)
+    } catch (error) {
+      res.redirect(Error/500)
     }
     const fetchRespose = await fetch(urlPath)
     const fetchJson = await fetchRespose.json()
@@ -56,7 +70,7 @@ app.get('/api/roblox/Url/', async (req, res, next) => {
     res.send(fetchJson)
     //console.log(fetchJson)
   } else {
-    res.redirect(/Error/404)
+    res.redirect(Error/404)
   }
   
 }),
@@ -102,7 +116,6 @@ app.get('/', (req, res, next) => {
     
     urlPath = req.protocol + '://' + req.get('host') + "/code-editor"
     UrlSplit = urlPath.trim().split(/:?\/+/g);
-    console.log(UrlSplit.slice(0, 2))
     return;
 
   }
@@ -118,7 +131,7 @@ app.get('/', (req, res, next) => {
 }),
 /* Status Code Handling */ 
 app.get('/Error/:Errornumber', (req, res) => {
-  HandleError(req, res, req.prams.Errornumber)
+  HandleError(req, res, req.params.Errornumber)
 }),
 app.all('*', (req, res) => {
   res.status(404);
