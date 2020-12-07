@@ -2,6 +2,110 @@ const express = require("express");
 const fetch = require("node-fetch");
 const app = express();
 const cloudinary = require("cloudinary").v2;
+const fs = require('fs');
+const path = require('path');
+
+let RawPackageJsonData
+let PackageJsonError = false
+let PackageJsonData
+
+let ErrorData = []
+
+try {
+  RawPackageJsonData = fs.readFileSync(path.resolve(__dirname, 'package.json'), 'utf8');
+} catch(error) {
+  PackageJsonError = true
+}
+
+if (PackageJsonError == false) {
+  try {
+    PackageJsonData = JSON.parse(RawPackageJsonData);
+  } catch(error) {
+    PackageJsonError = true
+  }
+}
+function recurseFindCopy(array, check, currentRecurse, options) {
+  console.log(`Starting recurseFindCopy${currentRecurse}!`)
+
+  console.log(array, check, currentRecurse, options)
+
+  currentRecurse++;
+  for (let i = 0; i < array.length; i++) {
+    let value = array[i];
+    console.log(value, i)
+    
+    let checkType = "===";
+    let checkCap = 5;
+
+    if (options != null) {
+      checkType = (options.checkType != null) ? options.checkType : "===";
+
+      checkCap = (options.checkCap != null) ? options.checkCap : 5;
+    }
+
+    console.log(checkType, checkCap)
+
+    valueIsArray = Array.isArray(value)
+    if (checkType == "==" || checkType == 0) {
+
+      if (valueIsArray == true && checkCap >= currentRecurse) {
+
+        return [recurse(array, check, currentRecurse, options), i]
+      }
+      
+      else if (value == check) {
+        return true;
+      } 
+      
+      else {
+        return false;
+      }
+    }
+    
+    else if (checkType == "===" || checkType == 1) {
+      
+      if (valueIsArray === true && options.checkCap >= currentRecurse) {
+
+        return [recurse(array, check, currentRecurse, options), i]
+      }
+      
+      else if (value === check) {
+        return true;
+      }
+      
+      else {
+        return false;
+      }
+    }
+  }
+  console.log(`Ending recurseFindCopy${currentRecurse}!`)
+}
+
+function FindCopy(array, check, options) {
+  console.log(`Starting!`)
+  console.log(array, check, options, recurseFindCopy(array, check, 1, options))
+  return recurseFindCopy(array, check, 1, options)
+}
+console.log()
+
+
+function AddError(data) {
+  if (data.code === null || data.from === null || data.messege === null) {
+    throw new Error("Invaled params");
+    return;
+  }
+  if (ErrorData[data.code] == null) {
+    ErrorData[data.code] = [data];
+  } 
+  else if(Array.isArray(ErrorData[data.code])) {
+    if (ErrorData[data.code])
+    ErrorData[data.code].push(data);
+  }
+  
+}
+
+AddError({code: 404, from: PackageJsonData.name, messege: "Invaled Url"})
+
 
 cloudinary.config({
   cloud_name: "eb1122-2",
@@ -14,11 +118,10 @@ app.use(express.static(__dirname + '/views'));
 app.set('view engine', 'ejs');
 
 
+
 function HandleError(req, res, errorcode) {
-  console.log(errorcode)
   // respond with html page
   if (req.accepts('html') == "html") {
-    console.log(errorcode, errorcode == 418)
     if (errorcode == 418) {
       res.render('Error', {url: req.url, ErrorCode: errorcode, GifAlt: "I AM A TEAPOT",GifLink: "https://media0.giphy.com/media/XJtpTFGatDgDTJhLtr/giphy.gif"});
       return;
@@ -27,18 +130,26 @@ function HandleError(req, res, errorcode) {
     return;
   }
 
+
   // respond with json
   if (req.accepts('json') == "json") {
-    res.send({ code: errorcode });
-    return;
+    if (PackageJsonError == false) {
+      if (ErrorData[errorcode]) {
+        res.send(ErrorData[errorcode]);
+        return;
+      } else {
+        res.send({ code: 500, from: PackageJsonData.name,messege: `No Errorcode found for Error ${errorcode}`});
+        return;
+      }
+    }
   }
 
   // default to plain-text. send()
   res.type('txt').send(`Error ${errorcode}: Not found`);
 }
 
+console.log(FindCopy([1,2], 1));
 
-cloudinary.image("l.gif", {width: 250, flags: "animated", fetch_format: "auto", crop: "scale", resource_type: "video"})
 
 app.get('/api', (req, res, next) => {
 
@@ -46,9 +157,7 @@ app.get('/api', (req, res, next) => {
 app.get('/api/roblox', (req, res, next) => {
 
 });
-app.get('/api/roblox/Url/', async (req, res, next) => {
-  console.log(req.query.url)
-
+app.get('/api/roblox/url/', async (req, res, next) => {
   urlPath = req.query.url
 
   if (urlPath == null) {
@@ -68,7 +177,6 @@ app.get('/api/roblox/Url/', async (req, res, next) => {
     const fetchJson = await fetchRespose.json()
     
     res.send(fetchJson)
-    //console.log(fetchJson)
   } else {
     res.redirect(Error/404)
   }
@@ -77,7 +185,6 @@ app.get('/api/roblox/Url/', async (req, res, next) => {
 /*
 app.get('/api/roblox/Url/', async (req, res, next) => {
   //urlPath = req.query.url
-  console.log(req.query)
   
   const UrlSplit = urlPath.toLowerCase().trim().split(/:?\/+/g);
   const UrlBeging = UrlSplit.slice(0, 2);
@@ -87,7 +194,6 @@ app.get('/api/roblox/Url/', async (req, res, next) => {
     const fetchJson = await fetchRespose.json()
     
     res.send(fetchJson)
-    console.log(fetchJson)
   } else {
     res.sendStatus(404);
   }
