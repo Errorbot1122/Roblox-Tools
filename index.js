@@ -50,7 +50,7 @@ function recurseFindCopy(array, check, currentRecurse, options) {
 
       if (valueIsArray == true && checkCap >= currentRecurse) {
 
-        return [recurse(array, check, currentRecurse, options), i]
+        return [recurseFindCopy(value, check, currentRecurse, options), i]
       }
       
       else if (value == check) {
@@ -66,7 +66,7 @@ function recurseFindCopy(array, check, currentRecurse, options) {
       
       if (valueIsArray === true && options.checkCap >= currentRecurse) {
 
-        return [recurse(array, check, currentRecurse, options), i]
+        return [recurseFindCopy(value, check, currentRecurse, options), i]
       }
       
       else if (value === check) {
@@ -86,7 +86,6 @@ function FindCopy(array, check, options) {
   console.log(array, check, options, recurseFindCopy(array, check, 1, options))
   return recurseFindCopy(array, check, 1, options)
 }
-console.log()
 
 
 function AddError(data) {
