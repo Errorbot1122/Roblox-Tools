@@ -25,15 +25,9 @@ if (PackageJsonError == false) {
   }
 }
 function recurseFindCopy(array, check, currentRecurse, options) {
-  console.log(`Starting recurseFindCopy${currentRecurse}!`)
-
-  console.log(array, check, currentRecurse, options)
-
   currentRecurse++;
   for (let i = 0; i < array.length; i++) {
-    let value = array[i];
-    console.log(value, i)
-    
+    let value = array[i];    
     let checkType = "===";
     let checkCap = 5;
 
@@ -42,8 +36,6 @@ function recurseFindCopy(array, check, currentRecurse, options) {
 
       checkCap = (options.checkCap != null) ? options.checkCap : 5;
     }
-
-    console.log(checkType, checkCap)
 
     valueIsArray = Array.isArray(value)
     if (checkType == "==" || checkType == 0) {
@@ -78,12 +70,9 @@ function recurseFindCopy(array, check, currentRecurse, options) {
       }
     }
   }
-  console.log(`Ending recurseFindCopy${currentRecurse}!`)
 }
 
 function FindCopy(array, check, options) {
-  console.log(`Starting!`)
-  console.log(array, check, options, recurseFindCopy(array, check, 1, options))
   return recurseFindCopy(array, check, 1, options)
 }
 
@@ -146,9 +135,6 @@ function HandleError(req, res, errorcode) {
   // default to plain-text. send()
   res.type('txt').send(`Error ${errorcode}: Not found`);
 }
-
-console.log(FindCopy([1,2], 1));
-
 
 app.get('/api', (req, res, next) => {
 
