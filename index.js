@@ -1,7 +1,7 @@
 const express = require("express");
 const fetch = require("node-fetch");
+const modelManger = require("3d-model-manger")
 const app = express();
-const cloudinary = require("cloudinary").v2;
 const fs = require('fs');
 const path = require('path');
 
@@ -16,7 +16,6 @@ try {
 } catch(error) {
   PackageJsonError = true
 }
-
 if (PackageJsonError == false) {
   try {
     PackageJsonData = JSON.parse(RawPackageJsonData);
@@ -24,16 +23,17 @@ if (PackageJsonError == false) {
     PackageJsonError = true
   }
 }
-function recurseFindCopy(array, check, currentRecurse, options) {
-  console.log(`Starting recurseFindCopy${currentRecurse}!`)
 
-  console.log(array, check, currentRecurse, options)
+function recurseFindCopy(array, check, currentRecurse, options) {
+  //console.log(`Starting recurseFindCopy${currentRecurse}!`)
+
+  //console.log(array, check, currentRecurse, options)
 
   currentRecurse++;
   for (let i = 0; i < array.length; i++) {
     let value = array[i];
     console.log(value, i)
-    
+
     let checkType = "===";
     let checkCap = 5;
 
@@ -43,7 +43,7 @@ function recurseFindCopy(array, check, currentRecurse, options) {
       checkCap = (options.checkCap != null) ? options.checkCap : 5;
     }
 
-    console.log(checkType, checkCap)
+    //console.log(checkType, checkCap)
 
     valueIsArray = Array.isArray(value)
     if (checkType == "==" || checkType == 0) {
@@ -52,38 +52,38 @@ function recurseFindCopy(array, check, currentRecurse, options) {
 
         return [recurseFindCopy(value, check, currentRecurse, options), i]
       }
-      
+
       else if (value == check) {
         return true;
-      } 
-      
+      }
+
       else {
         return false;
       }
     }
-    
+
     else if (checkType == "===" || checkType == 1) {
-      
+
       if (valueIsArray === true && options.checkCap >= currentRecurse) {
 
         return [recurseFindCopy(value, check, currentRecurse, options), i]
       }
-      
+
       else if (value === check) {
         return true;
       }
-      
+
       else {
         return false;
       }
     }
   }
-  console.log(`Ending recurseFindCopy${currentRecurse}!`)
+  //console.log(`Ending recurseFindCopy${currentRecurse}!`)
 }
 
 function FindCopy(array, check, options) {
-  console.log(`Starting!`)
-  console.log(array, check, options, recurseFindCopy(array, check, 1, options))
+  //console.log(`Starting!`)
+  //console.log(array, check, options, recurseFindCopy(array, check, 1, options))
   return recurseFindCopy(array, check, 1, options)
 }
 
@@ -95,22 +95,16 @@ function AddError(data) {
   }
   if (ErrorData[data.code] == null) {
     ErrorData[data.code] = [data];
-  } 
+  }
   else if(Array.isArray(ErrorData[data.code])) {
     if (ErrorData[data.code])
     ErrorData[data.code].push(data);
   }
-  
+
 }
 
 AddError({code: 404, from: PackageJsonData.name, messege: "Invaled Url"})
 
-
-cloudinary.config({
-  cloud_name: "eb1122-2",
-  api_key: "794149432517886",
-  api_secret:	process.env.CLOUDINARY_SECRET
-})/
 
 app.use(express.static(__dirname + '/views'));
 
@@ -147,9 +141,14 @@ function HandleError(req, res, errorcode) {
   res.type('txt').send(`Error ${errorcode}: Not found`);
 }
 
-console.log(FindCopy([1,2], 1));
+//console.log(FindCopy([1,2], 1));
 
-
+app.get('/ecmaker', (req, res, next) => {
+  if (req.accepts('html') == "html") {
+    res.render('Esay-Catolge-Maker', {})
+    return;
+  }
+});
 app.get('/api', (req, res, next) => {
 
 });
@@ -165,7 +164,7 @@ app.get('/api/roblox/url/', async (req, res, next) => {
 
   const UrlSplit = urlPath.toLowerCase().trim().split(/:?\/+/g);
   const UrlBeging = UrlSplit.slice(0, 2);
-  
+
   if (/(http)s?/.test(UrlBeging[0]) == true && /(roblox.com)/.test(UrlBeging[1])) {
     try {
 
@@ -174,24 +173,24 @@ app.get('/api/roblox/url/', async (req, res, next) => {
     }
     const fetchRespose = await fetch(urlPath)
     const fetchJson = await fetchRespose.json()
-    
+
     res.send(fetchJson)
   } else {
     res.redirect(Error/404)
   }
-  
+
 }),
 /*
 app.get('/api/roblox/Url/', async (req, res, next) => {
   //urlPath = req.query.url
-  
+
   const UrlSplit = urlPath.toLowerCase().trim().split(/:?\/+/g);
   const UrlBeging = UrlSplit.slice(0, 2);
-  
+
   if (/(http)s?/.test(UrlBeging[0]) == true && /(roblox.com)/.test(UrlBeging[1])) {
     const fetchRespose = await fetch(urlPath)
     const fetchJson = await fetchRespose.json()
-    
+
     res.send(fetchJson)
   } else {
     res.sendStatus(404);
@@ -210,7 +209,7 @@ app.get('/code-editor', (req, res, next) => {
   }
 
   // default to plain-text. send()
-  
+
 
   setTimeout(() => { res.redirect("/"); }, 3000);
 
@@ -218,7 +217,7 @@ app.get('/code-editor', (req, res, next) => {
 app.get('/', (req, res, next) => {
   if (req.accepts('html') == "html") {
     res.render('Home', {CodeEditorLink: req.protocol + '://' + req.get('host') + "/code-editor"})
-    
+
     urlPath = req.protocol + '://' + req.get('host') + "/code-editor"
     UrlSplit = urlPath.trim().split(/:?\/+/g);
     return;
@@ -234,7 +233,7 @@ app.get('/', (req, res, next) => {
   // default to plain-text. send()
   res.type('txt').send("linkes: " + req.protocol + '://' + req.get('host') + "/code-editor");
 }),
-/* Status Code Handling */ 
+/* Status Code Handling */
 app.get('/Error/:Errornumber', (req, res) => {
   HandleError(req, res, req.params.Errornumber)
 }),
@@ -255,7 +254,7 @@ app.get('/', (req, res) => {
 });
 
 app.all('*', (req, res, next) => {
-  
+
 });
 
 app.listen(3000);
