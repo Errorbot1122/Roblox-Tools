@@ -1,9 +1,22 @@
 const express = require("express");
 const fetch = require("node-fetch");
-const modelManger = require("3d-model-manger")
-const app = express();
+const modelManger = require("3d-model-manger");
 const fs = require('fs');
 const path = require('path');
+
+const app = express();
+const mmClasses = modelManger.classes
+const modelPath = "views/RobloxR15.obj"
+
+mmClassParse = {}
+for (const property in mmClasses) {
+  mmClassParse[property] = mmClasses[property].toString()
+}
+
+
+
+const rawObjRead = modelManger.readModel(modelPath)
+const objData = modelManger.parseRead(rawObjRead)
 
 let RawPackageJsonData
 let PackageJsonError = false
@@ -13,7 +26,8 @@ let ErrorData = []
 
 try {
   RawPackageJsonData = fs.readFileSync(path.resolve(__dirname, 'package.json'), 'utf8');
-} catch(error) {
+}
+catch(error) {
   PackageJsonError = true
 }
 if (PackageJsonError == false) {
@@ -145,7 +159,7 @@ function HandleError(req, res, errorcode) {
 
 app.get('/ecmaker', (req, res, next) => {
   if (req.accepts('html') == "html") {
-    res.render('Esay-Catolge-Maker', {})
+    res.render('Esay-Catolge-Maker', {modelData: objData, classes: mmClassParse, modelPath: modelPath})
     return;
   }
 });

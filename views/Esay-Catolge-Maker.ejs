@@ -11,6 +11,14 @@
       <h3> Console Logs :) </h3>
       <div id="console-log-area"></div>
     </div>
+    <!-- vars -->
+    <script type="text/javascript">
+      const classes = <%- JSON.stringify(classes) %>;
+      const modelData = <%- JSON.stringify(modelData) %>;
+      const modelPath = <%- JSON.stringify(modelPath) %>;
+    </script>
+
+    <!-- Code -->
     <script src="js/ECMaker.js" charset="utf-8"></script>
   </body>
 </html>

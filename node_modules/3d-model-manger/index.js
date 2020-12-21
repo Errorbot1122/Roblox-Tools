@@ -66,7 +66,7 @@ function objLineToClass(item, type) {
       break;
     case "f":
       vNumbers = [data[1].split("/")[0], data[2].split("/")[0], data[3].split("/")[0], (data[4] != null) ? data[4].split("/")[0] : null]
-      output = new Face(vertexArray[parseInt(vNumbers[0])], vertexArray[parseInt(vNumbers[1])], vertexArray[parseInt(vNumbers[2])], (vNumbers[3] != null) ? vertexArray[parseInt(vNumbers[3])] : null)
+      output = new Face(vertexArray[parseInt(vNumbers[0]) - 1], vertexArray[parseInt(vNumbers[1]) - 1], vertexArray[parseInt(vNumbers[2]) - 1], (vNumbers[3] != null) ? vertexArray[parseInt(vNumbers[3]) - 1] : null)
       break;
     default:
       output = false;
